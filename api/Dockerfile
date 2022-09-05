@@ -1,16 +1,14 @@
 FROM python:3.8
 
-ARG proxy_username
-ARG proxy_password
-ARG proxy_host
-ARG proxy_port
+ARG http_proxy
+ARG https_proxy
 
-RUN mkdir /backend
+RUN mkdir /api
 
-WORKDIR /backend
-COPY requirements.txt /backend/requirements.txt
+WORKDIR /api
+COPY requirements.txt /api/requirements.txt
 
-RUN pip install --proxy http://${proxy_username}:${proxy_password}@${proxy_host}:${proxy_port} --upgrade pip && \
-    pip install --proxy http://${proxy_username}:${proxy_password}@${proxy_host}:${proxy_port} -r requirements.txt
+RUN pip install --proxy ${http_proxy} --upgrade pip && \
+    pip install --proxy ${https_proxy} -r requirements.txt
 
-COPY . .
+COPY *.py .

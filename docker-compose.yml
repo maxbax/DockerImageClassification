@@ -2,24 +2,29 @@ version: '3'
 
 services:
   api:
-    build: api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
     command: ["flask", "run", "--host=0.0.0.0"]
-    volumes:
-      - ./api:/backend
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
+    env_file:
+        - .env
     ports:
       - "5000:5000"
 
   client:
-    build: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
     command: ["npm", "start"]
-    volumes:
-      - ./client:/frontend
-      - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
     ports:
@@ -27,5 +32,3 @@ services:
     depends_on:
       - api
 
-volumes:
-  node-modules:

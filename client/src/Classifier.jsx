@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 
 const Classifier = () => {
   const canvasRef = useRef();
   const imageRef = useRef();
   const videoRef = useRef();
+  const classifying = useRef(false);
 
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState('');
 
   useEffect(() => {
     async function getCameraStream() {
@@ -14,51 +16,16 @@ const Classifier = () => {
         audio: false,
         video: true,
       });
-  
-      if (videoRef.current) {      
+
+      if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    };
-  
+    }
+
     getCameraStream();
   }, []);
-  
-  useEffect(() => {
-    const interval = setInterval(async () => {
-		
-	
-		
-      captureImageFromCamera();
 
-      if (imageRef.current) {
-		  
-		
-        const formData = new FormData();
-        formData.append('image', imageRef.current);
-
-        const response = await fetch('http://localhost:5000/classify', {
-          method: "POST",
-          body: formData,
-        });
-
-        if (response.status === 200) {
-          const text = await response.text();
-          setResult(text);
-        } else {
-          setResult("Error from API.");
-        }
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const playCameraStream = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
-    }
-  };
-
-  const captureImageFromCamera = () => {
+  const captureImageFromCamera = useCallback(() => {
     const context = canvasRef.current.getContext('2d');
     const { videoWidth, videoHeight } = videoRef.current;
 
@@ -69,21 +36,55 @@ const Classifier = () => {
 
     canvasRef.current.toBlob((blob) => {
       imageRef.current = blob;
-    })
-  };
+    });
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (classifying.current) return;
+      classifying.current = true;
+
+      captureImageFromCamera();
+
+      if (imageRef.current) {
+        const formData = new FormData();
+        formData.append('image', imageRef.current);
+        try {
+          const response = await fetch('http://localhost:5000/classify', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (response.status === 200) {
+            const text = await response.text();
+            setResult(`Currently seeing: ${text}`);
+          } else {
+            setResult('Error from API.');
+          }
+        } catch (error) {
+          setResult(`Generic error: ${error}`);
+        }
+      }
+      classifying.current = false;
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [captureImageFromCamera]);
+
+  const playCameraStream = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
+  }, []);
 
   return (
     <>
-      <header>
-        <h1>Image classifier</h1>
-      </header>
-      <main>
-        <video ref={videoRef} onCanPlay={() => playCameraStream()} id="video" />
-        <canvas ref={canvasRef} hidden></canvas>
-        <p>Currently seeing: {result}</p>
-      </main>
+      <video ref={videoRef} onCanPlay={playCameraStream} id="video">
+        <track kind="captions" />
+      </video>
+      <canvas ref={canvasRef} hidden />
+      <p>{result}</p>
     </>
-  )
+  );
 };
 
 export default Classifier;

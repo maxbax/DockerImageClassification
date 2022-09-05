@@ -1,12 +1,7 @@
-# Ignore React production build
-client/build
+.env
 
-# Ignore pycache
+# api
 api/__pycache__
 
-# Ignore auxillary files
-.idea
-.DS_Store
-roadmap.txt
-run.bat
-.env
+# client
+client/node_modules

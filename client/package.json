@@ -2,19 +2,33 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "author": "MaxBax",
   "dependencies": {
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "react-scripts": "2.1.5"
+  },
+  "devDependencies": {
+    "@babel/core": "7.18.13",
+    "@babel/eslint-parser": "7.18.9",
+    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "13.3.0",
+    "babel-jest": "23.6.0",
+    "babel-loader": "8.0.5",
+    "babel-plugin-named-asset-import": "0.3.8",
+    "babel-preset-react-app": "10.0.1",
+    "eslint": "5.12.0",
+    "eslint-config-airbnb": "17.0.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-jsx-a11y": "6.6.1",
+    "eslint-plugin-react": "7.30.1",
+    "eslint-plugin-react-hooks": "4.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": [
     ">0.2%",
