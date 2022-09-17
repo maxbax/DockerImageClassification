@@ -5,15 +5,10 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-      args:
-        http_proxy: ${http_proxy}
-        https_proxy: ${https_proxy}
     command: ["flask", "run", "--host=0.0.0.0"]
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
-    env_file:
-        - .env
     ports:
       - "5000:5000"
 
@@ -21,9 +16,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      args:
-        http_proxy: ${http_proxy}
-        https_proxy: ${https_proxy}
     command: ["npm", "start"]
     environment:
       - NODE_ENV=development

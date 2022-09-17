@@ -8,7 +8,7 @@ RUN mkdir /api
 WORKDIR /api
 COPY requirements.txt /api/requirements.txt
 
-RUN pip install --proxy ${http_proxy} --upgrade pip && \
-    pip install --proxy ${https_proxy} -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 COPY *.py .
